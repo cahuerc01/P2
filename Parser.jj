@@ -65,6 +65,8 @@ TOKEN :
 |   <GREAT_THAN: ">" >
 |   <LESS_EQ: "<=" >
 |   <GREAT_EQ: ">=" >
+|   <ABRE_PAR: "(" >
+|   <CIERRA_PAR: ")">
 }
 /*
  * The nonterminals
