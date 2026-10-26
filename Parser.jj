@@ -1,0 +1,72 @@
+options {
+    STATIC = false;
+    IGNORE_CASE = true; //Para que no distinga mayusculas y minusculas
+}
+/*
+ * Parser
+ */
+PARSER_BEGIN(MiniREXX)
+public class MiniREXX {
+    public static void main (String[] args) throws ParseException {
+        //codigo principal
+    }
+}
+PARSER_END(MiniREXX)
+
+/*
+ * The terminals
+ */
+
+SKIP : /* Ignorar */
+{
+    " " 
+|   "\t"
+|   "\n"
+|   "\r"
+|   ";"
+|   "/*" (~["*"])* "*" ("*" | ~["*","\\/"] (~["*"])* "*")* "/" /* Comentarios multilínea */}
+
+TOKEN : /* Palabras reservadas */
+{
+  < PULL: "pull" >
+| < SAY: "say" >
+| < IF: "if" >
+| < THEN: "then" >
+| < ELSE: "else" >
+| < DO: "do" >
+| < END: "end" >
+| < WHILE: "while" >
+| < UNTIL: "until" >
+| < TO: "to" >
+| < BY: "by" >
+| < SELECT: "select" >
+| < WHEN: "when" >
+| < OTHERWISE: "otherwise" >
+| < CHOOSE: "choose" >
+| < ADDING: "adding" >
+| < SUBTRACTING: "subtracting" >
+}
+
+TOKEN :
+{
+    < ID: (["a"-"z","A"-"Z","_"]) (["a"-"z","A"-"Z","0"-"9","_"])* >
+|   < NUM: (["0"-"9"]+) >
+|   < CAD: "\"" (~["\n","\""])* "\"" | "'" (~["\n","'"])* "'" > /* Cadenas entre comillas dobles o simples */
+}
+TOKEN :
+{
+    < ASIG: "=" >
+|   < PLUS: "+" >
+|   < MINUS: "-" >
+|   <MULTIPLY: "*" >
+|   <DIVIDE: "/" >
+|   <DIFF: "<>" >
+|   <LESS_THAN: "<" >
+|   <GREAT_THAN: ">" >
+|   <LESS_EQ: "<=" >
+|   <GREAT_EQ: ">=" >
+}
+/*
+ * The nonterminals
+ */
+
