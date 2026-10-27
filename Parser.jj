@@ -66,9 +66,41 @@ TOKEN :
 |   <LESS_EQ: "<=" >
 |   <GREAT_EQ: ">=" >
 |   <ABRE_PAR: "(" >
-|   <CIERRA_PAR: ")">
+|   <CIERRA_PAR: ")" >
+|   <COMMA: "," >
 }
 /*
  * The nonterminals
  */
+void programa() : {}
+{
+    ( sentencia() )*
+    <EOF>
+}
 
+void sentencia() : {}
+{
+    asignacion()
+|   entrada()
+|   salida()
+    // resto de opciones
+}
+
+void asignacion() : {}
+{
+    <ID> <ASIG> expresion()
+}
+void entrada() : {}
+{
+    <PULL> <ID>
+}
+void salida() : {}
+{
+    <SAY> elementoSalida() ( <COMMA> elementoSalida() )*
+}
+
+void elementoSalida() : {}
+{
+    <CAD>
+|   expresion()
+}
