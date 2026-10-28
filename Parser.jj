@@ -72,6 +72,7 @@ TOKEN :
 /*
  * The nonterminals
  */
+ /* 3.1 Estructura general y entrada/salida*/
 void programa() : {}
 {
     ( sentencia() )*
@@ -103,4 +104,36 @@ void elementoSalida() : {}
 {
     <CAD>
 |   expresion()
+}
+/* 3.2 Bloques y seleccion */
+void bloque() : {}
+{
+    <DO> (sentencia())* <END>
+}
+void condicional() : {}
+{
+    <IF> condicion() <THEN> bloque() ( <ELSE> bloque())?
+}
+void seleccion() : {}
+{
+    <SELECT> clausulaWHEN() (clausulaWHEN())* (<OTHERWISE> bloque())? <END>
+}
+void clausulaWHEN() : {}
+{
+    <WHEN> condicion() <THEN> bloque()
+}
+/* 3.3 Bucles while, until, contador*/
+void bucleWhile() : {}
+{
+    <DO> <WHILE> condicion() (sentencia())* <END>
+}
+
+void bucleUntil() : {}
+{
+    <DO> <UNTIL> condicion() (sentencia())* <END>
+}
+
+void bucleContador() : {}
+{
+    <DO> <ID> <ASIG> expresion() <TO> expresion() (<BY> (<ADDING>|<SUBTRACTING>)? <NUM>)? (sentencia())* <END>
 }
