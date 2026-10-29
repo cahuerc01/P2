@@ -137,3 +137,50 @@ void bucleContador() : {}
 {
     <DO> <ID> <ASIG> expresion() <TO> expresion() (<BY> (<ADDING>|<SUBTRACTING>)? <NUM>)? (sentencia())* <END>
 }
+
+/*3.4 Condiciones y expresiones*/
+
+void condicion() : {}
+{
+    expresion() (relacional() expresion())?
+}
+
+void relacional() : {}
+{
+    <ASIG>
+|   <DIFF>
+|   <LESS_THAN>
+|   <GREAT_THAN>
+|   <LESS_EQ>
+|   <GREAT_EQ>
+}
+
+void expresion() : {}
+{
+    termino() ((<PLUS> | <MINUS>) termino())*
+}
+
+void termino() : {}
+{
+    factor() ((<MULTIPLY> | <DIVIDE>) factor())*
+}
+
+void factor() : {}
+{
+    <MINUS> atomo()
+|   <PLUS> atomo()
+|   atomo()
+}
+
+void atomo() : {}
+{
+    <NUM>
+|   <ID>
+|   <ABRE_PAR> expresion() <CIERRA_PAR>
+|   elegir()
+}
+
+void elegir() : {}
+{
+    <CHOOSE> <ABRE_PAR> condicion() <COMMA> expresion() <COMMA> expresion() <CIERRA_PAR>
+}
