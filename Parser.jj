@@ -9,6 +9,15 @@ PARSER_BEGIN(MiniREXX)
 public class MiniREXX {
     public static void main (String[] args) throws ParseException {
         //codigo principal
+        try {
+            MiniREXX parser = new MiniREXX(System.in);
+            parser.programa();
+            System.out.println("\n--- ¡Compilación y generación de código finalizadas con éxito! ---");
+        } catch (TokenMgrError e) {
+            System.err.println("Error léxico: " + e.getMessage());
+        } catch (ParseException e) {
+            System.err.println("Error sintáctico: " + e.getMessage());
+        }
     }
 }
 PARSER_END(MiniREXX)
@@ -17,14 +26,15 @@ PARSER_END(MiniREXX)
  * The terminals
  */
 
-SKIP : /* Ignorar */
+SKIP : /* Espacios en blanco y separadores simples */
 {
-    " " 
+    " "
 |   "\t"
 |   "\n"
 |   "\r"
 |   ";"
-|   "/*" (~["*"])* "*" ("*" | ~["*","\\/"] (~["*"])* "*")* "/" /* Comentarios multilínea */}
+|   < "/*" (~["*"])* "*/" >
+}
 
 TOKEN : /* Palabras reservadas */
 {
@@ -50,7 +60,7 @@ TOKEN : /* Palabras reservadas */
 TOKEN :
 {
     < ID: (["a"-"z","A"-"Z","_"]) (["a"-"z","A"-"Z","0"-"9","_"])* >
-|   < NUM: (["0"-"9"]+) >
+|   < NUM: (["0"-"9"])+ >
 |   < CAD: "\"" (~["\n","\""])* "\"" | "'" (~["\n","'"])* "'" > /* Cadenas entre comillas dobles o simples */
 }
 TOKEN :
@@ -84,25 +94,41 @@ void sentencia() : {}
     asignacion()
 |   entrada()
 |   salida()
-    // resto de opciones
+|   condicional()
+|   seleccion()
+|   bucleWhile()
+|   bucleUntil()
+|   bucleContador()
+|   bloque()
 }
 
-void asignacion() : {}
+void asignacion() : {Token t;}
 {
-    <ID> <ASIG> expresion()
+    t= <ID> <ASIG>
+    {
+        System.out.println("valori " + t.image);
+    }
+    expresion()
+    {
+        System.out.println("asigna");
+    }
 }
 void entrada() : {}
 {
     <PULL> <ID>
 }
-void salida() : {}
+void salida() : {int contador = 0;}
 {
-    <SAY> elementoSalida() ( <COMMA> elementoSalida() )*
+    <SAY> elementoSalida() {contador++;}
+    ( <COMMA> elementoSalida() {contador++;})*
+    {
+        System.out.println("print " + contador);
+    }
 }
 
-void elementoSalida() : {}
+void elementoSalida() : {Token t;}
 {
-    <CAD>
+    t = <CAD> {System.out.println("metecad " + t.image);}
 |   expresion()
 }
 /* 3.2 Bloques y seleccion */
@@ -155,27 +181,49 @@ void relacional() : {}
 |   <GREAT_EQ>
 }
 
-void expresion() : {}
+void expresion() : {Token op;}
 {
-    termino() ((<PLUS> | <MINUS>) termino())*
+    termino() (
+        (op = <PLUS> | op = <MINUS>) termino()
+        {
+            if(op.image.equals("+")){
+                System.out.println("add");
+            }else{
+                System.out.println("sub");
+            }
+        }
+    )*
 }
 
-void termino() : {}
+void termino() : {Token op;}
 {
-    factor() ((<MULTIPLY> | <DIVIDE>) factor())*
+    factor() (
+        (op = <MULTIPLY> | op = <DIVIDE>) factor()
+        {
+            if(op.image.equals("*") || op.image.equalsIgnoreCase("MULTIPLY")) {
+                System.out.println("mul");
+            }else{
+                System.out.println("div");
+            }
+        }
+        )*
 }
 
-void factor() : {}
+void factor() : {boolean negativo = false;}
 {
-    <MINUS> atomo()
-|   <PLUS> atomo()
-|   atomo()
+    (<MINUS> {negativo = true;} | <PLUS>)? atomo()
+    {
+        if(negativo) {
+            System.out.println("mete -1");
+            System.out.println("mul");
+        }
+    }
 }
 
-void atomo() : {}
+void atomo() : {Token t;}
 {
-    <NUM>
-|   <ID>
+    t = <NUM> { System.out.println("mete " + t.image); }
+|   t= <ID> { System.out.println("valord " + t.image);}
 |   <ABRE_PAR> expresion() <CIERRA_PAR>
 |   elegir()
 }
