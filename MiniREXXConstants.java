@@ -51,29 +51,31 @@ public interface MiniREXXConstants {
   /** RegularExpression Id. */
   int ASIG = 27;
   /** RegularExpression Id. */
-  int PLUS = 28;
+  int EQUAL = 28;
   /** RegularExpression Id. */
-  int MINUS = 29;
+  int PLUS = 29;
   /** RegularExpression Id. */
-  int MULTIPLY = 30;
+  int MINUS = 30;
   /** RegularExpression Id. */
-  int DIVIDE = 31;
+  int MULTIPLY = 31;
   /** RegularExpression Id. */
-  int DIFF = 32;
+  int DIVIDE = 32;
   /** RegularExpression Id. */
-  int LESS_THAN = 33;
+  int DIFF = 33;
   /** RegularExpression Id. */
-  int GREAT_THAN = 34;
+  int LESS_THAN = 34;
   /** RegularExpression Id. */
-  int LESS_EQ = 35;
+  int GREAT_THAN = 35;
   /** RegularExpression Id. */
-  int GREAT_EQ = 36;
+  int LESS_EQ = 36;
   /** RegularExpression Id. */
-  int ABRE_PAR = 37;
+  int GREAT_EQ = 37;
   /** RegularExpression Id. */
-  int CIERRA_PAR = 38;
+  int ABRE_PAR = 38;
   /** RegularExpression Id. */
-  int COMMA = 39;
+  int CIERRA_PAR = 39;
+  /** RegularExpression Id. */
+  int COMMA = 40;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -108,6 +110,7 @@ public interface MiniREXXConstants {
     "<NUM>",
     "<CAD>",
     "\"=\"",
+    "\"==\"",
     "\"+\"",
     "\"-\"",
     "\"*\"",

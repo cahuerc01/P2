@@ -1,0 +1,20 @@
+/* Prueba de select en Mini-REXX */
+
+x = 2;
+
+select
+    when x == 1 then
+        do
+            say "Uno";
+        end
+    when x == 2 then
+        do
+            say "Dos";
+        end
+    otherwise
+        do
+            say "Otro";
+        end
+end
+
+say x;

@@ -1,0 +1,23 @@
+/* Prueba de bucles en Mini-REXX */
+
+i = 1;
+do while i <= 3
+    do
+        say i;
+        i = i + 1;
+    end
+end
+
+j = 5;
+do until j == 0
+    do
+        say j;
+        j = j - 1;
+    end
+end
+
+do k = 1 to 3
+    do
+        say k;
+    end
+end

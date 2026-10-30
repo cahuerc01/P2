@@ -7,6 +7,13 @@ options {
  */
 PARSER_BEGIN(MiniREXX)
 public class MiniREXX {
+    private static int contadorEtiquetas = 0;
+    private static String etqFinSelectActual = "";
+
+
+    public static String nuevaEtiqueta(){
+        return "L" + (++contadorEtiquetas);
+    }
     public static void main (String[] args) throws ParseException {
         //codigo principal
         try {
@@ -66,6 +73,7 @@ TOKEN :
 TOKEN :
 {
     < ASIG: "=" >
+|   < EQUAL: "==" >
 |   < PLUS: "+" >
 |   < MINUS: "-" >
 |   <MULTIPLY: "*" >
@@ -96,9 +104,9 @@ void sentencia() : {}
 |   salida()
 |   condicional()
 |   seleccion()
-|   bucleWhile()
-|   bucleUntil()
-|   bucleContador()
+|   LOOKAHEAD(2) bucleWhile() //2 para ver el While
+|   LOOKAHEAD(2) bucleUntil() //2 para ver el Until
+|   LOOKAHEAD(3) bucleContador() //3  para ver ID y ASIG
 |   bloque()
 }
 
@@ -136,32 +144,117 @@ void bloque() : {}
 {
     <DO> (sentencia())* <END>
 }
-void condicional() : {}
+void condicional() : {String etqElse = nuevaEtiqueta(); String etqFin = nuevaEtiqueta();}
 {
-    <IF> condicion() <THEN> bloque() ( <ELSE> bloque())?
+    <IF> condicion(){
+        System.out.println("jz " + etqElse);
+    } 
+    <THEN> bloque(){
+        System.out.println("jump " + etqFin);
+        System.out.println(etqElse + ":");
+    } 
+    ( 
+        <ELSE> bloque()
+    )?
+    {
+        System.out.println(etqFin + ":");
+    }
 }
 void seleccion() : {}
 {
-    <SELECT> clausulaWHEN() (clausulaWHEN())* (<OTHERWISE> bloque())? <END>
+    <SELECT> 
+    {
+        etqFinSelectActual = nuevaEtiqueta();
+    }clausulaWHEN() 
+    (clausulaWHEN())* 
+    (<OTHERWISE> bloque())? 
+    <END>
+    {
+        System.out.println(etqFinSelectActual + ":");
+    }
 }
-void clausulaWHEN() : {}
+void clausulaWHEN() : {String etqSiguiente = nuevaEtiqueta();}
 {
-    <WHEN> condicion() <THEN> bloque()
+    <WHEN> condicion()
+    {
+        System.out.println("jz " + etqSiguiente);
+    } <THEN> bloque()
+    {
+        System.out.println("jump " + etqFinSelectActual);
+        System.out.println(etqSiguiente + ":");
+    }
 }
 /* 3.3 Bucles while, until, contador*/
-void bucleWhile() : {}
+void bucleWhile() : {String etqInicio = nuevaEtiqueta(); String etqFin = nuevaEtiqueta();}
 {
-    <DO> <WHILE> condicion() (sentencia())* <END>
+    <DO> <WHILE>
+    {
+        System.out.println(etqInicio + ":");
+    } 
+    condicion()
+    {
+        System.out.println("jz " + etqFin);
+    } 
+    (sentencia())*
+    <END>
+    {
+        System.out.println("jump " + etqInicio);
+        System.out.println(etqFin + ":");
+    }
 }
 
-void bucleUntil() : {}
+void bucleUntil() : {String etqInicio = nuevaEtiqueta(); String etqFin = nuevaEtiqueta();}
 {
-    <DO> <UNTIL> condicion() (sentencia())* <END>
+    <DO> <UNTIL>
+    {
+        System.out.println(etqInicio + ":");
+    } condicion()
+    {
+        System.out.println("jz " + etqFin);
+    } (sentencia())* <END>
+    {
+        System.out.println("jump " + etqInicio);
+        System.out.println(etqFin + ":");
+    }
 }
 
-void bucleContador() : {}
+void bucleContador() : {
+    Token id;
+    Token pasoNum = null;
+    boolean esResta = false;
+    String etqInicio = nuevaEtiqueta();
+    String etqFin = nuevaEtiqueta();
+}
 {
-    <DO> <ID> <ASIG> expresion() <TO> expresion() (<BY> (<ADDING>|<SUBTRACTING>)? <NUM>)? (sentencia())* <END>
+    <DO> id = <ID> <ASIG> expresion()
+    {
+        System.out.println("valori " + id.image);
+        System.out.println("asigna");
+
+        System.out.println(etqInicio + ":");
+    }
+    <TO> expresion()
+    {
+
+    }
+    (
+        <BY> 
+        (<ADDING> {esResta = false;}|<SUBTRACTING> {esResta = true; })? 
+        pasoNum = <NUM>
+    )? 
+    {
+        String valorPaso = (pasoNum != null) ? pasoNum.image : "1";
+        System.out.println("valori " + id.image);
+        System.out.println("valord " + id.image);
+        System.out.println("mete " + valorPaso);
+        System.out.println(esResta ? "sub" : "add");
+        System.out.println("asigna");
+    }(sentencia())* 
+    <END>
+    {
+        System.out.println("jump " + etqInicio);
+        System.out.println(etqFin + ":");
+    }
 }
 
 /*3.4 Condiciones y expresiones*/
@@ -174,6 +267,7 @@ void condicion() : {}
 void relacional() : {}
 {
     <ASIG>
+|   <EQUAL>
 |   <DIFF>
 |   <LESS_THAN>
 |   <GREAT_THAN>
